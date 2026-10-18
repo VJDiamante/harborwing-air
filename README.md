@@ -1,8 +1,5 @@
 # HarborWing Air Relational Database System
 
-## Explainer Video
-[Watch the Explainer Video Presentation](YOUR_VIDEO_URL_HERE)
-
 ## System Overview
 HarborWing Air is a regional airline. This project replaces spreadsheet tracking with an normalized 3rd Normal Form (3NF) relational database built in MySQL.
 
