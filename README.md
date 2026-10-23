@@ -30,3 +30,15 @@ The schema contains 11 core tables:
    `python seed.py`
 3. Verify Query Results:
    `mysql -u root -p harborwing_air < queries.sql`
+
+   ---
+
+## Part 2: CRUD Application Setup
+
+### Overview
+A Python/Flask web application connected to the `harborwing_air` database to support full CRUD operations, reservation linkages, and business rules without raw SQL entry[cite: 2, 3].
+
+### Installation & Startup Instructions
+1. Navigate to the application folder[cite: 5]:
+   ```cmd
+   cd application

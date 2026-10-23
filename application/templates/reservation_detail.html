@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation #{{ reservation.reservation_id }} Details</title>
+</head>
+<body>
+    <a href="/">&larr; Back to Dashboard</a>
+    <h1>Reservation #{{ reservation.reservation_id }} Details</h1>
+    <hr>
+
+    <h3>Reservation & Passenger Info</h3>
+    <ul>
+        <li><strong>Main Passenger:</strong> {{ reservation.main_passenger_name }} (#{{ reservation.passenger_id }})</li>
+        <li><strong>Contact:</strong> {{ reservation.email_address }} | {{ reservation.phone_number }}</li>
+        <li><strong>Status:</strong> {{ reservation.reservation_status_code }}</li>
+        <li><strong>Ticket Type / Class:</strong> {{ reservation.ticket_type_code }} / {{ reservation.travel_class_code }}</li>
+        <li><strong>Party Size:</strong> {{ reservation.party_size }}</li>
+        <li><strong>Creation Date:</strong> {{ reservation.creation_datetime }}</li>
+    </ul>
+
+    <hr>
+    <h3>Linked Flight Legs</h3>
+    {% if legs %}
+    <table border="1" cellpadding="5" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Leg ID</th>
+                <th>Flight Number</th>
+                <th>Route</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leg in legs %}
+            <tr>
+                <td>#{{ leg.leg_id }}</td>
+                <td>{{ leg.flight_number }}</td>
+                <td>{{ leg.origin_airport_code }} &rarr; {{ leg.destination_airport_code }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p><em>No legs linked to this reservation.</em></p>
+    {% endif %}
+
+    <hr>
+    <h3>Linked Payments</h3>
+    {% if payments %}
+    <table border="1" cellpadding="5" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Payment ID</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in payments %}
+            <tr>
+                <td>#{{ p.payment_id }}</td>
+                <td>${{ "%.2f"|format(p.payment_amount) }}</td>
+                <td>{{ p.payment_status_code }}</td>
+                <td>{{ p.payment_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p><em>No payments linked to this reservation.</em></p>
+    {% endif %}
+</body>
+</html>

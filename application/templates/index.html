@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HarborWing Air - Simple Admin Interface</title>
+</head>
+<body>
+    <h1>HarborWing Air - System Interface</h1>
+    <hr>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p><strong>[{{ category | upper }}]:</strong> {{ message }}</p>
+        {% endfor %}
+        <hr>
+      {% endif %}
+    {% endwith %}
+
+    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+        <tr valign="top">
+            <!-- 1 & 2. Create Passenger & Reservation -->
+            <td width="33%">
+                <h3>1 & 2. Create Passenger & Reservation</h3>
+                <form action="/create_reservation" method="POST">
+                    <p><label>First Name:</label><br><input type="text" name="first_name" required></p>
+                    <p><label>Last Name:</label><br><input type="text" name="last_name" required></p>
+                    <p><label>Email Address:</label><br><input type="email" name="email" required></p>
+                    <p><label>Phone Number:</label><br><input type="text" name="phone" required></p>
+                    <p><label>Party Size:</label><br><input type="number" name="party_size" value="1" required></p>
+                    <button type="submit">Create Reservation</button>
+                </form>
+            </td>
+
+            <!-- 3. Link Flight Leg -->
+            <td width="33%">
+                <h3>3. Link Flight Leg</h3>
+                <form action="/link_leg" method="POST">
+                    <p>
+                        <label>Select Reservation:</label><br>
+                        <select name="reservation_id" required>
+                            {% for r in reservation_options %}
+                                <option value="{{ r.reservation_id }}">Reservation #{{ r.reservation_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        <label>Select Flight Leg:</label><br>
+                        <select name="leg_id" required>
+                            {% for leg in legs %}
+                                <option value="{{ leg.leg_id }}">Leg #{{ leg.leg_id }}: {{ leg.flight_number }} ({{ leg.origin_airport_code }} -> {{ leg.destination_airport_code }})</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <button type="submit">Link Leg</button>
+                </form>
+            </td>
+
+            <!-- 4. Add Payment -->
+            <td width="34%">
+                <h3>4. Add Payment</h3>
+                <form action="/add_payment" method="POST">
+                    <p>
+                        <label>Select Reservation:</label><br>
+                        <select name="reservation_id" required>
+                            {% for r in reservation_options %}
+                                <option value="{{ r.reservation_id }}">Reservation #{{ r.reservation_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        <label>Payment Amount ($):</label><br>
+                        <input type="number" step="0.01" name="amount" required>
+                    </p>
+                    <button type="submit">Process Payment</button>
+                </form>
+            </td>
+        </tr>
+
+        <tr valign="top">
+            <!-- 6. Update Record -->
+            <td>
+                <h3>6. Update Reservation</h3>
+                <form action="/update_reservation" method="POST">
+                    <p>
+                        <label>Select Reservation:</label><br>
+                        <select name="reservation_id" required>
+                            {% for r in reservation_options %}
+                                <option value="{{ r.reservation_id }}">Reservation #{{ r.reservation_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        <label>Status Code:</label><br>
+                        <select name="status_code">
+                            <option value="CONFIRMED">CONFIRMED</option>
+                            <option value="PENDING">PENDING</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label>New Party Size:</label><br>
+                        <input type="number" name="party_size" value="2" required>
+                    </p>
+                    <button type="submit">Update Record</button>
+                </form>
+            </td>
+
+            <!-- 7. Unlink Leg -->
+            <td>
+                <h3>7. Unlink Flight Leg</h3>
+                <form action="/unlink_leg" method="POST">
+                    <p>
+                        <label>Select Reservation:</label><br>
+                        <select name="reservation_id" required>
+                            {% for r in reservation_options %}
+                                <option value="{{ r.reservation_id }}">Reservation #{{ r.reservation_id }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <p>
+                        <label>Leg ID to Remove:</label><br>
+                        <input type="number" name="leg_id" required>
+                    </p>
+                    <button type="submit">Unlink Leg</button>
+                </form>
+            </td>
+
+            <!-- 8 & 9. Safe Delete Passenger -->
+            <td>
+                <h3>8 & 9. Delete Passenger</h3>
+                <form action="/delete_passenger" method="POST">
+                    <p>
+                        <label>Select Passenger:</label><br>
+                        <select name="passenger_id" required>
+                            {% for p in passengers %}
+                                <option value="{{ p.passenger_id }}">Passenger #{{ p.passenger_id }}: {{ p.first_name }} {{ p.last_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <button type="submit">Delete Passenger</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <br><hr>
+
+    <!-- 5. View Complete Reservation Table -->
+    <h3>Recent Reservations (Click ID to View Full Details)</h3>
+    <table border="1" cellpadding="5" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Reservation ID (Click to View)</th>
+                <th>Passenger Name</th>
+                <th>Party Size</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in reservations %}
+            <tr>
+                <td><a href="/reservation/{{ r.reservation_id }}"><strong>#{{ r.reservation_id }}</strong></a></td>
+                <td>{{ r.passenger_name }}</td>
+                <td>{{ r.party_size }}</td>
+                <td>{{ r.reservation_status_code }}</td>
+                <td>{{ r.creation_datetime }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

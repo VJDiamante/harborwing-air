@@ -62,3 +62,6 @@ SELECT
 FROM flight_cost fc
 ORDER BY fc.valid_from_date ASC
 LIMIT 1;
+
+
+SELECT * FROM harborwing_air.reservation ORDER BY reservation_id DESC LIMIT 5;
